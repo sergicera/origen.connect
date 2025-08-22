@@ -27,6 +27,7 @@ import {
 } from "@mui/material";
 
 import { Login as LoginIcon } from "@mui/icons-material";
+import Login from "@/www/views/Login";
 
 // Hooks
 import { useAppContext, auth } from "./store/context-provider";
@@ -208,66 +209,42 @@ export default function App() {
     );
   }
 
+  // If not authenticated, show the dedicated login page
+  if (!isAuthenticated) {
+    return (
+      <Box sx={{ minHeight: "100vh" }}>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </Box>
+    );
+  }
+
   return (
     <Box sx={{ minHeight: "100vh" }}>
       <AppBar
-        position={isAuthenticated ? "fixed" : "absolute"}
-        sx={{
-          zIndex: (theme) => theme.zIndex.drawer + 1,
-          boxShadow: "none",
-          transition: theme.transitions.create(
-            ["width", "margin", "top", "left", "transform", "opacity"],
-            {
-              easing: theme.transitions.easing.sharp,
-              duration: theme.transitions.duration.standard,
-            }
-          ),
-          ...(isAuthenticated
-            ? {}
-            : {
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-                width: 820,
-                opacity: 0.95,
-              }),
-        }}
+        position="fixed"
+        sx={{ zIndex: (theme) => theme.zIndex.drawer + 1, boxShadow: "none" }}
       >
         <Toolbar
           sx={{
             backgroundColor: theme.palette.background.default,
             borderBottom: `1px solid ${theme.palette.divider}`,
-            ...(!isAuthenticated && { justifyContent: "center" }),
           }}
         >
-          {isAuthenticated ? (
-            <>
-              <AppLogo toggleCollapse={toggleCollapse} />
-              <Box sx={{ flexGrow: 1 }} />
-              <ColorModeToggle
-                darkMode={darkMode}
-                onChange={handleThemeChange}
-              />
-              <Tooltip title="Logout">
-                <IconButton sx={{ ml: 1 }} onClick={handleLogout}>
-                  <i className="fa-sharp fa-thin fa-right-from-bracket" />
-                </IconButton>
-              </Tooltip>
-            </>
-          ) : (
-            <Button
-              size="small"
-              sx={{ color: "#08A89D" }}
-              onClick={handleMicrosoftLogin}
-              startIcon={<LoginIcon />}
-            >
-              Login
-            </Button>
-          )}
+          <AppLogo toggleCollapse={toggleCollapse} />
+          <Box sx={{ flexGrow: 1 }} />
+          <ColorModeToggle darkMode={darkMode} onChange={handleThemeChange} />
+          <Tooltip title="Logout">
+            <IconButton sx={{ ml: 1 }} onClick={handleLogout}>
+              <i className="fa-sharp fa-thin fa-right-from-bracket" />
+            </IconButton>
+          </Tooltip>
         </Toolbar>
       </AppBar>
 
-      {isAuthenticated && (
+      {
         <Drawer
           variant="permanent"
           ref={sidebarRef}
@@ -320,9 +297,9 @@ export default function App() {
           )}
           <DrawerMenu isCollapsed={isCollapsed} isResizing={isResizing} />
         </Drawer>
-      )}
+      }
 
-      {isAuthenticated && (
+      {
         <Box
           component="main"
           sx={{
@@ -368,14 +345,13 @@ export default function App() {
                 }
               />
             ))}
-
             <Route
               path="*"
               element={<Navigate to="/loader/ifc/file" replace />}
             />
           </Routes>
         </Box>
-      )}
+      }
     </Box>
   );
 }

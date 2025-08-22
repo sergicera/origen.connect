@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
+import { Navigate } from "react-router-dom";
 import { auth } from "@/www/store/context-provider";
 import { useFirebaseIdToken } from "@/www/hooks/useInitFirebaseIdToken";
 
@@ -28,6 +29,6 @@ export default function Protected({ children }) {
     return children;
   }
 
-  // Not authorised
-  return null;
+  // Not authorised → go to login page
+  return <Navigate to="/login" replace />;
 }
