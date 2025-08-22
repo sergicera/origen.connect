@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": [
+        "*"
+      ] // Map "@" to the root folder
+    }
+  },
+  "include": [
+    "www"
+  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "services",
+    "teams"
+  ]
+}

@@ -1,0 +1,1 @@
+export const fileServerPaths = [["sap", ["csv"]]];

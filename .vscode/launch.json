@@ -1,0 +1,19 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug Vitest File",
+            "type": "node",
+            "request": "launch",
+            "program": "${workspaceFolder}/frontend/node_modules/vitest/vitest.mjs",
+            "args": [
+                "run",
+                "--no-file-parallelism",
+                "${file}"
+            ],
+            "smartStep": true,
+            "console": "integratedTerminal",
+            "cwd": "${workspaceFolder}/frontend",
+        }
+    ]
+}

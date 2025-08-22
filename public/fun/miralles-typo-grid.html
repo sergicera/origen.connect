@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calligraphy</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.skypack.dev/three@0.132.2/build/three.module.js",
+            "three/examples/jsm/controls/OrbitControls.js": "https://cdn.skypack.dev/three@0.132.2/examples/jsm/controls/OrbitControls.js"
+        }
+    }
+    </script>
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+        import { letterDefinitions, createTextGeometry } from '/frontend/utils/format.typography.js';
+
+        // --- CONFIG ---
+        const FONT_COLOR_RGBA = 'rgba(0, 0, 0, 0.75)';
+        const CHAR_SIZE = 5;
+        const STROKE_WIDTH = 0.5;
+        const GRID_COLS = 5;
+        const CAMERA_Z = 50;
+        // --------------
+
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xffffff);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = CAMERA_Z;
+
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        const controls = new OrbitControls(camera, renderer.domElement);
+
+        const allChars = Object.keys(letterDefinitions).sort((a, b) => {
+            const getSortGroup = (char) => {
+                if (/[a-zA-Z]/.test(char)) return 0; // Letters
+                if (/[0-9]/.test(char)) return 1;    // Numbers
+                return 2;                            // Other symbols
+            };
+
+            const groupA = getSortGroup(a);
+            const groupB = getSortGroup(b);
+
+            if (groupA !== groupB) {
+                return groupA - groupB;
+            }
+
+            return a.localeCompare(b); // Sort alphabetically within the same group
+        });
+        const gridGroup = new THREE.Group();
+        const cols = GRID_COLS;
+        const charSize = CHAR_SIZE;
+        const spacing = charSize * 1.05;
+
+        for (let i = 0; i < allChars.length; i++) {
+            const char = allChars[i];
+            const row = Math.floor(i / cols);
+            const col = i % cols;
+            
+            const color = new THREE.Color(new THREE.Color(FONT_COLOR_RGBA).getHex());
+            const opacity = parseFloat(FONT_COLOR_RGBA.split(',')[3]);
+            const textGeo = createTextGeometry(char, { size: charSize, color, strokeWidth: STROKE_WIDTH, opacity });
+            
+            textGeo.position.x = col * spacing;
+            textGeo.position.y = row * spacing;
+            
+            gridGroup.add(textGeo);
+        }
+
+        scene.add(gridGroup);
+        
+        // Rotate the grid first to get the final orientation
+        gridGroup.rotation.x = Math.PI;
+        
+        // Update the world matrix after rotation so the bounding box is correct
+        gridGroup.updateMatrixWorld(true);
+        
+        // Now calculate the bounding box of the rotated grid and center it
+        const gridBox = new THREE.Box3().setFromObject(gridGroup);
+        const gridCenter = new THREE.Vector3();
+        gridBox.getCenter(gridCenter);
+        gridGroup.position.sub(gridCenter);
+
+
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+    </script>
+</body>
+</html> 
