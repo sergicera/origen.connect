@@ -8,7 +8,6 @@ This design decouples the complex business logic from the view layer, making the
 
 The `CoreContextProvider.jsx` serves as the bridge between the vanilla JavaScript modules and the React component tree.
 
--   **Initialization**: It instantiates all defined modules using a `moduleFactory`.
--   **State Management**: It holds references to all module instances within a `useRef` hook. This ensures that the state of our vanilla JS classes persists throughout the component lifecycle without being affected by React's re-renders.
--   **Context API**: It exposes the modules and associated functionalities (like event subscription and module retrieval) to the entire application via a React Context. Components can then access the core logic using the `useCoreContext` hook.
-
+- **Initialization**: It instantiates all defined modules using a `moduleFactory`.
+- **State Management**: It holds references to all module instances within a `useRef` hook. This ensures that the state of our vanilla JS classes persists throughout the component lifecycle without being affected by React's re-renders.
+- **Context API**: It exposes the modules and associated functionalities (like event subscription and module retrieval) to the entire application via a React Context. Components can then access the core logic using the `useCoreContext` hook.
