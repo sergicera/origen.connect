@@ -1,9 +1,0 @@
-.env*
-.gitignore
-.venv/
-.model_cache/
-env/
-dist/
-venv/
-logs/
-node_modules/
